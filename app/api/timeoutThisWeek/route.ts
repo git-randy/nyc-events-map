@@ -24,6 +24,7 @@ export async function GET(): Promise<NextResponse> {
   const eventList = $("body").find("[data-zone-name='large_list']").first()
   const headers = $(eventList).find("div >* h3")
   const summaries = $(eventList).find("div >* [data-testid='summary_testID']")
+  const links = $(eventList).find("div >* a:has(h3)")
 
   const eventTitles = headers.map((_, el) => {
     // Remove all non alphanumeric characters except for spaces
@@ -34,11 +35,16 @@ export async function GET(): Promise<NextResponse> {
     return $(el).text()
   }).get()
 
+  const eventLinks = links.map((_, el) => {
+    return $(el).attr("href")
+  }).get()
+
   const response: NYCTimeoutResponse = {
     from: "Timeout",
     events: eventTitles.map((title, i) => ({
       title,
-      summary: eventSummaries[i] ?? "", // Fallback if summary list is shorter
+      summary: eventSummaries[i] ?? "",
+      link: eventLinks[i] ?? "" // Fallback if list is shorter
     })
     )
   }

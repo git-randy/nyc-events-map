@@ -8,11 +8,11 @@ export async function GET(
 ) {
   const { address } = await params;
 
-  if(!address) {
+  if (!address) {
     return NextResponse.json(
-      { error: "An address is required"},
-      { status: 500 }
-    )
+      { error: "An address is required" },
+      { status: 500 },
+    );
   }
 
   const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
@@ -25,7 +25,7 @@ export async function GET(
     return NextResponse.json({ error: "Missing API key" }, { status: 401 });
   }
 
-  console.info(`Fetching ${url.toString()}`)
+  console.info(`Fetching ${url.toString()}`);
 
   const res = await fetch(url.toString(), { cache: "no-store" });
 
@@ -36,7 +36,7 @@ export async function GET(
     );
   }
 
-  const data = await res.json()
+  const data = await res.json();
 
-  return NextResponse.json(data)
+  return NextResponse.json(data);
 }

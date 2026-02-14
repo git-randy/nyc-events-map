@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.25",
+    "ai": "^6.0.68",
     "cheerio": "^1.1.2",
     "leaflet": "^1.9.4",
     "next": "16.1.3",
