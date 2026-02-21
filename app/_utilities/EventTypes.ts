@@ -2,6 +2,7 @@ type Event = {
   title: string;
   summary: string;
   link: string;
+  locations?: string[] | undefined
 }
 
 export type EventResponse = {
@@ -10,5 +11,5 @@ export type EventResponse = {
 }
 
 export interface NYCTimeoutResponse extends EventResponse {
-  from: "Timeout"
+  from: "TimeOut"
 }

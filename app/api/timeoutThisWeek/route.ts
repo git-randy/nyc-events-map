@@ -1,15 +1,14 @@
-"use server"
-
 import { NextResponse } from "next/server"
 import * as cheerio from "cheerio"
 import { NYCTimeoutResponse } from "@/app/_utilities/EventTypes"
 
 export async function GET(): Promise<NextResponse> {
-  const url = "https://www.timeout.com/newyork/things-to-do/things-to-do-in-new-york-this-week"
+  const domain = "www.timeout.com"
+  const url = `https://${domain}/newyork/things-to-do/things-to-do-in-new-york-this-week`
 
   const res = await fetch(url, {
     headers: {
-    "User-Agent": "Mozeilla/5.0",
+    "User-Agent": "Mozilla/5.0",
     },
     cache: "no-store"
   })
@@ -21,14 +20,16 @@ export async function GET(): Promise<NextResponse> {
   const html = await res.text();
   const $ = cheerio.load(html)
 
+  // Get list with only the events listed.
   const eventList = $("body").find("[data-zone-name='large_list']").first()
+
   const headers = $(eventList).find("div >* h3")
   const summaries = $(eventList).find("div >* [data-testid='summary_testID']")
   const links = $(eventList).find("div >* a:has(h3)")
 
   const eventTitles = headers.map((_, el) => {
     // Remove all non alphanumeric characters except for spaces
-    return $(el).text().split(".")[1].trim().replace(/[^a-zA-Z0-9 ]/g, "")
+    return $(el).text()
   }).get()
 
   const eventSummaries = summaries.map((_, el) => {
@@ -36,15 +37,16 @@ export async function GET(): Promise<NextResponse> {
   }).get()
 
   const eventLinks = links.map((_, el) => {
-    return $(el).attr("href")
+    return `https://${domain}/${$(el).attr("href")}`
   }).get()
 
   const response: NYCTimeoutResponse = {
-    from: "Timeout",
+    from: "TimeOut",
     events: eventTitles.map((title, i) => ({
       title,
-      summary: eventSummaries[i] ?? "",
-      link: eventLinks[i] ?? "" // Fallback if list is shorter
+      summary: eventSummaries[i] ?? "", // Fallback if list is shorter
+      link: eventLinks[i] ?? "",
+      locations: undefined
     })
     )
   }

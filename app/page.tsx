@@ -1,5 +1,7 @@
 "use client"
 
+// TODO: Build out scrapers to add to the event database and fetch from there
+
 import Filters from "@/app/_components/Filters"
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation";
