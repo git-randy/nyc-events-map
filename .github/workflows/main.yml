@@ -17,14 +17,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Runs a single command using the runners shell
-      - name: Checkouyt repo (sparse)
+      - name: Checkout repo (sparse)
         uses: actions/checkout@v4
         with:
          sparse-checkout: "app/_cron"
          sparse-checkout-cone-mode: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@4
+        uses: actions/setup-node@v4
         with:
           node-version: "22.5.1"
 
