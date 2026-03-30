@@ -1,3 +1,5 @@
+import { resolve } from "path";
+
 export function capitalize(text: string): string {
   /**
    * Capitalize the first letter in a string
@@ -14,4 +16,8 @@ export function chunk<T>(arr: T[], size: number): T[][] {
     out.push(arr.slice(i, i + size));
   }
   return out;
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
