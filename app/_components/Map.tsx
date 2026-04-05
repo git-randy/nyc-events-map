@@ -15,19 +15,18 @@ interface MapProps {
 }
 
 function Map({ events }: MapProps) {
-  // Create a custom icon for event markers
+
   const eventMarker = new Icon({
-    iconUrl: "/event_marker_icon.png", // Place your custom marker image in the public folder
-    iconSize: [30, 30], // Size of the icon
-    iconAnchor: [12, 30], // Point of the icon which corresponds to marker's location
-    popupAnchor: [4, -25], // Point from which the popup should open relative to the iconAnchor
+    iconUrl: "/event_marker_icon.png",
+    iconAnchor: [12, 30], // Offset from geoleocation
+    popupAnchor: [4, -25], // Popup location relative to the iconAnchor
   });
 
   const userMarker = new Icon({
-    iconUrl: "/user_marker_icon.png", // Place your custom marker image in the public folder
-    iconSize: [30, 30], // Size of the icon
-    iconAnchor: [12, 30], // Point of the icon which corresponds to marker's location
-    popupAnchor: [4, -25], // Point from which the popup should open relative to the iconAnchor
+    iconUrl: "/user_marker_icon.png",
+    iconSize: [30, 30],
+    iconAnchor: [12, 30],
+    popupAnchor: [4, -25],
   });
 
   return (
