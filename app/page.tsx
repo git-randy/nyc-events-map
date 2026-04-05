@@ -1,22 +1,14 @@
-"use client"
-
 // TODO: Build out scrapers to add to the event database and fetch from there
 
-import Filters from "@/app/_components/Filters"
-import dynamic from "next/dynamic"
-import { useSearchParams } from "next/navigation";
+import Map from "@/app/_components/Map"
+import { getEvents } from "@/app/_lib/data-service";
 
-const Map = dynamic(() => import("@/app/_components/Map"), {ssr: false})
-
-export default function Home() {
-
-  const searchParams = useSearchParams();
-  const activeFilter = searchParams.get("filter") ?? "this-week"
+export default async function Home() {
+  const events = await getEvents();
 
   return (
     <>
-      <Filters/>
-      <Map duration={activeFilter}/>
+      <Map events={events} />
     </>
   )
 }
