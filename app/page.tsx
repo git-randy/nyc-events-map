@@ -1,14 +1,15 @@
 // TODO: Build out scrapers to add to the event database and fetch from there
+"use client"
 
-import Map from "@/app/_components/Map"
-import { getEvents } from "@/app/_lib/data-service";
+import dynamic from "next/dynamic";
 
-export default async function Home() {
-  const events = await getEvents();
+const Map = dynamic(() => import("@/app/_components/Map"), {ssr: false})
+
+export default function Home() {
 
   return (
     <>
-      <Map events={events} />
+      <Map/>
     </>
   )
 }
