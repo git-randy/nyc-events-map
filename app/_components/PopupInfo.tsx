@@ -40,35 +40,35 @@ function OneEventView({event}: {event: EventInfo}) {
 
 function MultiEventView({events}: {events: EventInfo[]}) {
 
-   return (
-    <div>
-      <h3>{`${events.length} Events`}</h3>
-      {events.map((event) => (
-        <div key={event.title}>
-          {event.link ? (
-            <a href={event.link} target="_blank" rel="noopener noreferrer">
-              <h3 className="text-lg">
-                {event.title ? (
-                  <span>
-                    {event.title} <HiExternalLink className="inline pb-0.5" />
-                  </span>
-                ) : (
-                  <span>
-                    Click here for more details{" "}
-                    <HiExternalLink className="inline pb-0.5" />
-                  </span>
-                )}
-              </h3>
-            </a>
-          ) : (
+  return (
+  <div className="max-h-96 overflow-scroll overflow-x-hidden">
+    <h3 className="mb-1 font-bold">{`There are ${events.length} events here`}</h3>
+    {events.map((event) => (
+      <div key={event.title} className="mb-2 border-b">
+        {event.link ? (
+          <a href={event.link} target="_blank" rel="noopener noreferrer">
             <h3 className="text-lg">
-              {event.title ? event.title : "Event Information"}
+              {event.title ? (
+                <span>
+                  {event.title} <HiExternalLink className="inline pb-0.5" />
+                </span>
+              ) : (
+                <span>
+                  Click here for more details{" "}
+                  <HiExternalLink className="inline pb-0.5" />
+                </span>
+              )}
             </h3>
-          )}
-          <Summary text={event.description} link={event.link}/>
-        </div>
-      ))}
-    </div>
+          </a>
+        ) : (
+          <h3 className="text-lg">
+            {event.title ? event.title : "Event Information"}
+          </h3>
+        )}
+        <Summary text={event.description} link={event.link}/>
+      </div>
+    ))}
+  </div>
   );
 }
 

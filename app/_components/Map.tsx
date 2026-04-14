@@ -1,9 +1,11 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { Icon } from "leaflet";
 import { EventDataResponse, EventLocations } from "@/app/_lib/types";
 import PopupInfo from "@/app/_components/PopupInfo";
 import { useEffect, useState } from "react";
+import GeoLocateButton from "@/app/_components/GeoLocateButton";
+import { useUserGeolocation } from "@/app/_hooks/useGeolocation";
 
 const TEST_CURRENT_LOCATION: [number, number, (number | undefined)?] = [
   40.7056782231889, -74.00858544781083,
@@ -20,6 +22,7 @@ function MapPlaceholder() {
 
 function Map() {
   const [data, setData] = useState<EventDataResponse[]>([]);
+  const { userPosition, loading, error, getPosition } = useUserGeolocation();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -40,7 +43,7 @@ function Map() {
 
   const userMarker = new Icon({
     iconUrl: "/user_marker_icon.png",
-    iconSize: [30, 30],
+    iconSize: [34, 34],
     iconAnchor: [12, 30],
     popupAnchor: [4, -25],
   });
@@ -71,11 +74,11 @@ function Map() {
         title: entry.title,
         description: entry.description,
         link: entry.link,
-      })
+      });
     }
   });
 
-  console.log(eventLocations)
+  console.log(userPosition);
 
   return (
     <MapContainer
@@ -83,15 +86,20 @@ function Map() {
       zoom={13}
       scrollWheelZoom={true}
       placeholder={<MapPlaceholder />}
+      className="z-0"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      <button className="z-50">Hello</button>
-      <Marker position={TEST_CURRENT_LOCATION} icon={userMarker}>
-        <Popup>Your current location</Popup>
-      </Marker>
+      {userPosition && (
+        <Marker
+          position={[userPosition.lat, userPosition.lng]}
+          icon={userMarker}
+        >
+          <Popup>Your current location</Popup>
+        </Marker>
+      )}
       {eventLocations
         .filter((locale) => locale.latitude !== 0 && locale.longitude !== 0)
         .map((locale) => (
@@ -101,12 +109,13 @@ function Map() {
             icon={eventMarker}
           >
             <Popup>
-              <PopupInfo
-                eventList={locale.events}
-              />
+              <PopupInfo eventList={locale.events} />
             </Popup>
           </Marker>
         ))}
+      {!userPosition && (
+        <GeoLocateButton onClick={getPosition} loading={loading} />
+      )}
     </MapContainer>
   );
 }
