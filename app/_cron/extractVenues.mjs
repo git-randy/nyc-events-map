@@ -79,7 +79,7 @@ async function main() {
     await getVenues();
     return 0
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return 1
   }
 

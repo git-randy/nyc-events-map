@@ -78,8 +78,6 @@ function Map() {
     }
   });
 
-  console.log(userPosition);
-
   return (
     <MapContainer
       center={TEST_CURRENT_LOCATION}
