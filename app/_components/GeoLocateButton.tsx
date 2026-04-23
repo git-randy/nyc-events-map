@@ -2,7 +2,7 @@ function GeoLocateButton({onClick, loading}: {onClick: () => void, loading: bool
 
   return (
     <button
-      className="z-10000 cursor-pointer right-1/2 bottom-10 absolute rounded-full bg-blue-400 p-2 drop-shadow-2xl"
+      className="z-10000 cursor-pointer top-11/12 left-1/2 transform -translate-x-1/2 -trnaslate-y- absolute rounded-full bg-blue-400 p-2 drop-shadow-2xl"
       type="button"
       onClick={onClick}
     >

@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
 import { EventDataResponse, EventLocations } from "@/app/_lib/types";
 import PopupInfo from "@/app/_components/PopupInfo";
@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import GeoLocateButton from "@/app/_components/GeoLocateButton";
 import { useUserGeolocation } from "@/app/_hooks/useGeolocation";
 
-const TEST_CURRENT_LOCATION: [number, number, (number | undefined)?] = [
-  40.7056782231889, -74.00858544781083,
+const DEFAULT_CENTER: [number, number, (number | undefined)?] = [
+  40.714396456665675, -73.97297652049365,
 ];
 
 function MapPlaceholder() {
@@ -22,7 +22,7 @@ function MapPlaceholder() {
 
 function Map() {
   const [data, setData] = useState<EventDataResponse[]>([]);
-  const { userPosition, loading, error, getPosition } = useUserGeolocation();
+  const { userPosition, loading, getPosition } = useUserGeolocation();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -80,7 +80,7 @@ function Map() {
 
   return (
     <MapContainer
-      center={TEST_CURRENT_LOCATION}
+      center={DEFAULT_CENTER}
       zoom={13}
       scrollWheelZoom={true}
       placeholder={<MapPlaceholder />}

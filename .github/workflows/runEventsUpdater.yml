@@ -1,0 +1,50 @@
+name:
+  Fetch TimeOut Events
+
+  # Controls when the workflow will run
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 */2 * *"
+
+      # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "cron"
+  cron:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Runs a single command using the runners shell
+      - name: Checkout repo (sparse)
+        uses: actions/checkout@v4
+        with:
+         sparse-checkout: "app/_cron"
+         sparse-checkout-cone-mode: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.5.1"
+
+      - name: Install dependencies
+        run: npm install cheerio@1.1.2 @supabase/supabase-js@2.97.0
+
+      - name: Fetch events from TimeOut
+        run: node app/_cron/fetchTimeoutEvents.mjs
+        env:
+         SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+         SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+
+      - name: Extract venue data from text
+        run: node app/_cron/extractVenues.mjs
+        env:
+         SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+         SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+
+      - name: Forward geocode venues
+        run: node app/_cron/geocodeVenues.mjs
+        env:
+         SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+         SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
