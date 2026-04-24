@@ -42,6 +42,7 @@ jobs:
         env:
          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+         GOOGLE_GENERATIVE_API_KEY: ${{secrets.GOOGLE_GENERATIVE_API_KEY}}
 
       - name: Forward geocode venues
         run: node app/_cron/geocodeVenues.mjs
