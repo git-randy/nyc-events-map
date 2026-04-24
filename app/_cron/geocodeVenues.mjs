@@ -47,11 +47,19 @@ async function getLatLng(events) {
     const data = await res.json();
 
     if (data.status.code === 200) {
-      results.push({
-        ...event,
-        latitude: data.results[0].geometry.lat,
-        longitude: data.results[0].geometry.lng,
-      });
+      if (!data.results.length) {
+        results.push({...event, latitude: 0, longitude: 0})
+        console.info(`There were no results for ${event.venue}`)
+      } else {
+        if (!data.results[0]?.geometry) {
+          console.info(`No coordinates found for ${event.venue}`)
+        }
+        results.push({
+          ...event,
+          latitude: data.results[0]?.geometry?.lat ?? 0,
+          longitude: data.results[0]?.geometry?.lng ?? 0
+        })
+      };
     } else {
       throw new Error(`Status code: ${data.status.code}. ${data.status.message}`)
     }
