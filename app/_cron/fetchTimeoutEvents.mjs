@@ -146,17 +146,15 @@ async function main() {
       } else {
         console.warn("Unable to retrieve any events from TimeOut.");
       }
-
-      return 0;
     } catch (err) {
       console.error(err);
-      return 1;
+      process.exit(1);
     }
   } else {
     console.info(
       `Events were retrieved recently. Next fetch will be in ${REFRESH_PERIOD} days.`,
     );
-    return 1;
+    process.exit(1);
   }
 }
 

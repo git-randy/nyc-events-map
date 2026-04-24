@@ -77,10 +77,9 @@ async function main() {
 
   try {
     await getVenues();
-    return 0
   } catch (err) {
     console.error(err)
-    return 1
+    process.exit(1)
   }
 
 }
