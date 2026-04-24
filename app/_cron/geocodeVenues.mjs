@@ -53,7 +53,7 @@ async function getLatLng(events) {
         longitude: data.results[0].geometry.lng,
       });
     } else {
-      throw new Error(`Statuc code: ${data.status.code}. ${data.status.message}`)
+      throw new Error(`Status code: ${data.status.code}. ${data.status.message}`)
     }
 
     await delay(1400) //Free trial accounts are limited to one request per second
@@ -76,7 +76,9 @@ async function updateDatabase(rows) {
 async function main() {
 
   try {
+    console.info("Geocoding venues...")
     await geocodeVenues();
+    console.info("Done")
   } catch (err) {
     console.error(err)
     process.exit(1)

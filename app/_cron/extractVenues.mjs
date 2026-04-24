@@ -44,6 +44,8 @@ async function getVenues() {
 
   const model = googleAI("gemini-2.5-flash-lite");
 
+  console.info("Extracting venues...")
+
   try {
     const { text } = await generateText({
       model,
@@ -59,6 +61,7 @@ async function getVenues() {
       return { id: i + 1, venue };
     });
 
+    console.info("Updaing database...")
     const { error } = await supabase
       .from("events")
       .upsert(updatedVenues, { onConflict: "id" });
@@ -77,6 +80,7 @@ async function main() {
 
   try {
     await getVenues();
+    console.info("Done")
   } catch (err) {
     console.error(err)
     process.exit(1)

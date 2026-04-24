@@ -49,3 +49,4 @@ jobs:
         env:
          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+         OPENCAGEDDATA_API_KEY: ${{secrets.OPENCAGEDDATA_API_KEY}}
