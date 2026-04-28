@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
 .leaflet-container {
-  height: 100vh;
+  height: 100%;
+}
+
+.leaflet-control-container {
+  z-index: 10
+}
+.leaflet-top.leaflet-right {
+  right: 50px;
 }
