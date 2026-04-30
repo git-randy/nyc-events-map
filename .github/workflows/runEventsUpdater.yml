@@ -32,20 +32,20 @@ jobs:
         run: npm install cheerio@1.1.2 @supabase/supabase-js@2.97.0
 
       - name: Fetch events from TimeOut
-        run: node app/_cron/fetchTimeoutEvents.mjs
+        run: node cron/fetchTimeoutEvents.mjs
         env:
          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
 
       - name: Extract venue data from text
-        run: node app/_cron/extractVenues.mjs
+        run: node cron/extractVenues.mjs
         env:
          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
          GOOGLE_GENERATIVE_API_KEY: ${{secrets.GOOGLE_GENERATIVE_API_KEY}}
 
       - name: Forward geocode venues
-        run: node app/_cron/geocodeVenues.mjs
+        run: node cron/geocodeVenues.mjs
         env:
          SUPABASE_URL: ${{secrets.SUPABASE_URL}}
          SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}

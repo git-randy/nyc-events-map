@@ -16,30 +16,38 @@ function Sidebar({ noLocationEvents }: SidebarProps) {
   }
 
   return (
-    <aside
-      className={`fixed left-0 top-0 h-screen z-40 border-r border-slate-200 bg-slate-50 transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-6" : "w-80 lg:w-96"
-      }`}
-    >
-      <button
+    <>
+      <div
+        role="button"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="w-6 absolute -right-3 top-1/2 translate-y-1/2 bg-slate-50 border border-slate-200 rounded-r-md p-2 shadow-md hover:bg-slate-100 transition-colors"
-        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        className={`fixed p-6 w-6 z-20 top-1/2 translate-y-1/2 group transition-all duration-300 ease-in-out ${isCollapsed ? "left-4" : "left-80 lg:left-94"}`}
       >
-        {isCollapsed ? (
-          <HiChevronRight className="w-4 h-4 text-slate-600" />
-        ) : (
-          <HiChevronLeft className="w-4 h-4 text-slate-600" />
-        )}
-      </button>
-
-      {!isCollapsed && (
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`relative w-6 bg-slate-50 border border-slate-200 rounded-r-md p-2 right-5 shadow-md group-hover:bg-slate-100`}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? (
+            <HiChevronRight className="relative -left-1 w-4 h-4 text-slate-600"/>
+          ) : (
+            <HiChevronLeft className="relative -left-1 w-4 h-4 text-slate-600"/>
+          )}
+        </button>
+      </div>
+      <aside
+        className={`fixed left-0 top-0 h-screen z-40 border-r border-slate-200 bg-slate-50 transition-all duration-300 ease-in-out ${
+          isCollapsed ? "w-6" : "w-80 lg:w-96"
+        }`}
+      >
+        {!isCollapsed && (
         <div className="p-4 max-h-dvh">
-          <h2 className="mb-4 text-xl font-semibold">Other Events</h2>
-          <div className="space-y-4 max-h-screen overflow-y-auto pr-1">
-            <p className="text-sm text-slate-700">
+          <div className="overflow-auto">
+          <h2 className="mb-4 text-xl font-semibold max-w-full">Other Events</h2>
+          <p className="text-sm text-slate-700 mb-4">
               Events hard to pinpoint are shown here
-            </p>
+          </p>
+          </div>
+          <div className="space-y-4 max-h-screen overflow-y-auto pr-1">
             {eventList.map((event, index) => (
               <div
                 key={`${event.title}-${index}`}
@@ -68,6 +76,7 @@ function Sidebar({ noLocationEvents }: SidebarProps) {
         </div>
       )}
     </aside>
+    </>
   );
 }
 
