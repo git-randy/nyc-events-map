@@ -10,16 +10,19 @@ const CONTEXT = [
   "Extract the location where each event takes place.",
   "",
   "RULES:",
-  "- The location can be a venue, neighborhood, or street address.",
+  "- The location can be a venue, district, neighborhood, or street address.",
   "- Only extract the FIRST location mentioned.",
   "- Do NOT return descriptions.",
-  "- Each event is numbered.",
-  "- If no specific location exists, return 'undefined'.",
-  "- If a cross street is mentioned such as 52nd Street and 8th Avenue, return that",
+  "- Each event is separated by a | symbol.",
+  "- If a location does not exist, return 'undefined'.",
+  "- If a cross street is mentioned such as 52nd Street and 8th Avenue, that is one location.",
+  "",
+  "LOCATION EXAMPLES:",
+  "- Public library, midtown",
   "",
   "OUTPUT FORMAT:",
   "- Return venues in the same order as the input.",
-  "- Separate each venue using the pipe symbol: |",
+  "- Separate each location using |.",
   "- Do NOT include numbering.",
   "- Do NOT include explanations.",
 ].join(" ");
@@ -35,8 +38,11 @@ async function getVenues() {
   }
 
   const prompt = data
-    .map((event, i) => `${i + 1}. ${event.title}: ${event.description.slice(0, 400)}`)
-    .join("\n\n");
+    .map(
+      (event, i) =>
+        `${i + 1}. ${event.title}: ${event.description.slice(0, 400)}`,
+    )
+    .join(" | ");
 
   const googleAI = createGoogleGenerativeAI({
     apiKey: process.env.GOOGLE_GENERATIVE_API_KEY,
@@ -44,7 +50,7 @@ async function getVenues() {
 
   const model = googleAI("gemini-2.5-flash-lite");
 
-  console.info("Extracting venues...")
+  console.info("Extracting venues...");
 
   try {
     const { text } = await generateText({
@@ -61,14 +67,17 @@ async function getVenues() {
       return { id: i + 1, venue };
     });
 
-    console.info("Updaing database...")
+    console.info("Updaing database...");
     const { error } = await supabase
       .from("events")
       .upsert(updatedVenues, { onConflict: "id" });
 
     if (error) {
       console.error(
-        "Something went wrong with updating venues in the database",
+        `Something went wrong updating venues in the database. ${error}`,
+      );
+      throw new Error(
+        `Something went wrong updating venues in the database. ${error}`,
       );
     }
   } catch (err) {
@@ -77,15 +86,13 @@ async function getVenues() {
 }
 
 async function main() {
-
   try {
     await getVenues();
-    console.info("Done")
+    console.info("Done");
   } catch (err) {
-    console.error(err)
-    process.exit(1)
+    console.error(err);
+    process.exit(1);
   }
-
 }
 
 if (fileURLToPath(import.meta.url) === `${process.argv[1]}`) {
