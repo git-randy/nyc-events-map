@@ -28,22 +28,24 @@ async function fetchEvents() {
 
   const articles = $(eventList).find("article");
 
-  const eventsObj = articles.map((_, article) => {
-    return {
-      title: $(article)
-        .find("h3")
-        .text()
-        .replace(/^\d+\.\s*/, ""),
-      summary: $(article).find("[data-testid='summary_testID']").text(),
-      link: $(article).find("a:has(h3)").attr("href")
-        ? `https://${domain}${$(article).find("a:has(h3)").attr("href")}`
-        : null,
-    };
-  }).get();
+  const eventsObj = articles
+    .map((_, article) => {
+      return {
+        title: $(article)
+          .find("h3")
+          .text()
+          .replace(/^\d+\.\s*/, ""), // Remove leading numbering
+        summary: $(article).find("[data-testid='summary_testID']").text(),
+        link: $(article).find("a:has(h3)").attr("href")
+          ? `https://${domain}${$(article).find("a:has(h3)").attr("href")}`
+          : null,
+      };
+    })
+    .get();
 
   const response = {
     from: "TimeOut",
-    events: eventsObj
+    events: eventsObj,
   };
   return [{ sucess: true }, { status: 200 }, { content: response }];
 }
@@ -55,13 +57,13 @@ async function addEvents(eventsObject) {
       title: event.title,
       description: event.summary,
       link: event.link,
-      source: eventsObject.content.from
+      source: eventsObject.content.from,
     };
   });
 
   const { error: upsertEventsError } = await supabase
     .from("events")
-    .upsert(rows, {onConflict: "id"})
+    .upsert(rows, { onConflict: "id" });
 
   if (upsertEventsError) {
     throw new Error(JSON.stringify(upsertEventsError));
@@ -82,6 +84,9 @@ async function addEvents(eventsObject) {
   if (staleEvents.length) {
     const staleIds = staleEvents.map((event) => event.id);
 
+    console.info(
+      `Removing ${staleIds.length} stale events with ids: ${staleIds.join(", ")}`,
+    );
     const { error: deleteError } = await supabase
       .from("events")
       .delete()
@@ -90,6 +95,8 @@ async function addEvents(eventsObject) {
     if (deleteError) {
       throw new Error(JSON.stringify(deleteError));
     }
+  } else {
+    console.info("No stale events to remove.");
   }
 }
 

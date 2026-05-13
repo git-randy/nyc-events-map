@@ -14,19 +14,26 @@ async function geocodeVenues() {
   const cityNames = ["nyc", "new york", "new york city", "ny"];
   // Add nyc to location
   const updatedVenues = venues.map((entry) => {
-    if (cityNames.some((name) => entry.venue.toLowerCase().includes(name))) {
-      return entry;
+    if (entry.venue === null) {
+      console.info(`Venue is null for event with id ${entry.id}`);
     } else {
-      return entry.venue === "undefined"
-        ? { ...entry, venue: "null island" } // Default address if venue is not found
-        : { ...entry, venue: `${entry.venue} ${cityNames[0]}` };
+      if (
+        cityNames.some((cityName) =>
+          entry.venue.toLowerCase().includes(cityName),
+        )
+      ) {
+        return entry;
+      } else {
+        return entry.venue === "undefined"
+          ? { ...entry, venue: "null island" } // Default address if venue is not found
+          : { ...entry, venue: `${entry.venue} ${cityNames[0]}` };
+      }
     }
   });
 
   const venuesWithCoordinates = await getLatLng(updatedVenues);
 
-  await updateDatabase(venuesWithCoordinates)
-
+  await updateDatabase(venuesWithCoordinates);
 }
 
 async function getLatLng(events) {
@@ -48,55 +55,53 @@ async function getLatLng(events) {
 
     if (data.status.code === 200) {
       if (!data.results.length) {
-        results.push({...event, latitude: 0, longitude: 0})
-        console.info(`There were no results for ${event.venue}`)
+        results.push({ ...event, latitude: 0, longitude: 0 });
+        console.info(`There were no results for ${event.venue}`);
       } else {
         if (!data.results[0]?.geometry) {
-          console.info(`No coordinates found for ${event.venue}`)
+          console.info(`No coordinates found for ${event.venue}`);
         }
         results.push({
           ...event,
           latitude: data.results[0]?.geometry?.lat ?? 0,
-          longitude: data.results[0]?.geometry?.lng ?? 0
-        })
-      };
+          longitude: data.results[0]?.geometry?.lng ?? 0,
+        });
+      }
     } else {
-      throw new Error(`Status code: ${data.status.code}. ${data.status.message}`)
+      throw new Error(
+        `Status code: ${data.status.code}. ${data.status.message}`,
+      );
     }
 
-    await delay(1400) //Free trial accounts are limited to one request per second
-
+    await delay(1400); //Free trial accounts are limited to one request per second
   }
 
-  return results
+  return results;
 }
 
 async function updateDatabase(rows) {
-    const { error } = await supabase
+  const { error } = await supabase
     .from("events")
-    .upsert(rows, {onConflict: "id"})
+    .upsert(rows, { onConflict: "id" });
 
-    if (error) {
-      throw new Error(JSON.stringify(error))
-    }
-}
-
-async function main() {
-
-  try {
-    console.info("Geocoding venues...")
-    await geocodeVenues();
-    console.info("Done")
-  } catch (err) {
-    console.error(err)
-    process.exit(1)
+  if (error) {
+    throw new Error(JSON.stringify(error));
   }
 }
 
+async function main() {
+  try {
+    console.info("Geocoding venues...");
+    await geocodeVenues();
+    console.info("Done");
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
 
 if (fileURLToPath(import.meta.url) === `${process.argv[1]}`) {
   await main();
 } else {
   throw new Error("Importing this module is not allowed");
 }
-
